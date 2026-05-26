@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "apiKey": "sk-or-v1-YOUR-KEY-HERE",
+  "modelMapping": {
+    "haiku": "anthropic/claude-3.5-haiku",
+    "sonnet": "anthropic/claude-sonnet-4-20250514",
+    "opus": "anthropic/claude-opus-4-20250514"
+  },
+  "quotaResetTracking": {
+    "lastQuotaExhausted": null,
+    "fallbackActive": false
+  }
+}

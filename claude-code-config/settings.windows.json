@@ -1,0 +1,92 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_MAX_CONTEXT_TOKENS": "200000"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "NotebookEdit(*)",
+      "Task(*)",
+      "mcp__*",
+      "Read(**/*)",
+      "Edit(**/*)",
+      "Write(**/*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "haiku",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -File ${env:USERPROFILE}/.claude/hooks/model-router.ps1",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -File ${env:USERPROFILE}/.claude/hooks/quota-monitor.ps1",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -Command \"$f = Join-Path $env:USERPROFILE '.claude\\lessons.md'; if (Test-Path $f) { Write-Output '=== Lessons Learned (auto-loaded via SessionStart hook) ==='; Get-Content $f -Raw; Write-Output '=== End of Lessons ==='; Write-Output 'IMPORTANT: You MUST briefly confirm you have loaded these lessons at session start.' } else { Write-Output 'No lessons.md found at ~/.claude/lessons.md' }\"",
+            "statusMessage": "Loading lessons..."
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -Command \"$f = Join-Path $env:USERPROFILE '.claude\\lessons.md'; if (Test-Path $f) { Write-Output '=== Lessons Learned (reloaded after compaction) ==='; Get-Content $f -Raw; Write-Output '=== End of Lessons ==='; Write-Output 'IMPORTANT: You MUST briefly confirm you have loaded these lessons.' } else { Write-Output 'No lessons.md found at ~/.claude/lessons.md' }\"",
+            "statusMessage": "Reloading lessons after compaction..."
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "pwsh -NoProfile -File ${env:USERPROFILE}/.claude/hooks/statusline.ps1"
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "claude-mem@thedotmack": true,
+    "github@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "thedotmack": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/thedotmack/claude-mem.git"
+      }
+    }
+  },
+  "effortLevel": "medium",
+  "tui": "fullscreen",
+  "skipAutoPermissionPrompt": true
+}
